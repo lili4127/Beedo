@@ -31,14 +31,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Tutorial")]
     [SerializeField] private GameObject tutorialPanel;
-    [SerializeField] private TextMeshProUGUI windowText;
-    [SerializeField] private GameObject paddlePanel;
-    [SerializeField] private GameObject ballPanel;
-    [SerializeField] private GameObject mechanicsPanel;
-    [SerializeField] private GameObject greenyPanel;
-    [SerializeField] private GameObject hudPanel;
     public bool tutorial { get; private set; }
-    private int tutorialState;
+    [SerializeField] private int tutorialState;
 
     private void Awake()
     {
@@ -66,7 +60,6 @@ public class GameManager : MonoBehaviour
 
         else
         {
-            tutorialState = 0;
             StartTutorial();
             PlayerPrefs.SetInt("tutorial", 0);
             PlayerPrefs.Save();
@@ -216,24 +209,6 @@ public class GameManager : MonoBehaviour
         imageToFade.color = endValue;
     }
 
-    IEnumerator TutorialBackgroundCo(Color endValue, float duration)
-    {
-        for(int i = 0; i < backgrounds.Length - 1; i++)
-        {
-            float time = 0;
-            Color startValue = backgrounds[i].color;
-
-            while (time < duration)
-            {
-                backgrounds[i].color = Color.Lerp(startValue, endValue, time / duration);
-                time += Time.deltaTime;
-                yield return null;
-            }
-            backgrounds[i].color = endValue;
-            yield return new WaitForSeconds(1f);
-        }
-    }
-
     private void LoseGame()
     {
         HUD.SetActive(false);
@@ -300,48 +275,34 @@ public class GameManager : MonoBehaviour
     private void StartTutorial()
     {
         tutorialPanel.SetActive(true);
-        windowText.text = "Welcome to Beedo! Click Next to Continue.";
+        tutorialState = 0;
+        tutorialPanel.transform.GetChild(tutorialState).gameObject.SetActive(true);
     }
 
-    public void AdvanceTutorial()
+    public void TutorialStep(int i)
     {
-        tutorialState++;
+        tutorialPanel.transform.GetChild(tutorialState).gameObject.SetActive(false);
+        tutorialState += i;
 
-        switch (tutorialState)
+        if (tutorialState <= 0)
         {
-            case 1:
-                windowText.text = "Use the left and right arrow keys to move. Try it out!";
-                break;
-            case 2:
-                windowText.text = "";
-                paddlePanel.SetActive(true);
-                break;
-            case 3:
-                paddlePanel.SetActive(false);
-                ballPanel.SetActive(true);
-                break;
-            case 4:
-                ballPanel.SetActive(false);
-                mechanicsPanel.SetActive(true);
-                break;
-            case 5:
-                mechanicsPanel.SetActive(false);
-                greenyPanel.SetActive(true);
-                break;
-            case 6:
-                greenyPanel.SetActive(false);
-                hudPanel.SetActive(true);
-                StartCoroutine(TutorialBackgroundCo(targetColor, 2f));
-                break;
-            case 7:
-                hudPanel.SetActive(false);
-                tutorialPanel.SetActive(false);
-                RestartGame();
-                tutorial = false;
-                break;
-            default:
-                break;
+            tutorialState = 0;
         }
+
+        if (tutorialState >= 6)
+        {
+            tutorialState = 6;
+        }
+
+        tutorialPanel.transform.GetChild(tutorialState).gameObject.SetActive(true);
+    }
+
+    public void PlayGame()
+    {
+        HUD.SetActive(false);
+        tutorialPanel.SetActive(false);
+        RestartGame();
+        tutorial = false;
     }
 
     private void OnDisable()
