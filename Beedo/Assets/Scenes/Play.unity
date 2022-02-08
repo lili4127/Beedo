@@ -2788,7 +2788,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hitting a greenhouse gas will send 3 balls back at you!
+  m_text: Hitting the gas will send 3 balls back at you!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dec265cf934b04196af294a159127035, type: 2}
   m_sharedMaterial: {fileID: 7622364475437777530, guid: dec265cf934b04196af294a159127035, type: 2}
